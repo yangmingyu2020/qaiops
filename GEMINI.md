@@ -83,6 +83,7 @@ alembic upgrade head
 
 ## 코딩 컨벤션
 
+- 이모티콘 사용 금지: 문서, 코드, 주석, 커밋 메시지 등 모든 곳에서 이모티콘(유니코드 이모지, GitHub 이모지 등)을 사용하지 않는다
 - 서버 로직은 `async/await` 기본
 - 새 API 엔드포인트 추가 시 `qaiops/db/models.py`에 스키마 먼저 정의
 - 새 파서 추가 시 `qaiops/wrapper/parsers/`에 모듈 생성 + `__init__.py`의 `get_parser()` 업데이트
