@@ -2,6 +2,29 @@
 
 이 프로젝트의 모든 중요한 변경 사항을 기록합니다.
 
+## [0.2.0-alpha.1] - 2026-04-15
+
+### Added
+- **Dashboard**: Next.js 16 (App Router) + Recharts 기반 모니터링 대시보드
+  - 메인 대시보드: KPI 카드 4개 (Total Requests, Tokens, Cost, Active Tools)
+  - Daily Token Usage Area Chart (30일 추이)
+  - Tool Distribution Donut Chart (도구별 사용 비중)
+  - Top Expensive Requests 랭킹 (비용 상위 5건)
+  - 사이드바 내비게이션 (Dashboard, History, Projects)
+  - 헤더 서버 연결 상태 표시 (30초 간격 폴링)
+- **History 페이지**: 로그 목록 테이블
+  - 필터: 도구명, 프로젝트 ID, 전문 검색
+  - 페이지네이션
+  - 로그 상세 모달 (prompt + response 전문)
+- **Projects 페이지**: 프로젝트별 사용량 통계 테이블
+  - Requests, Tokens, Cost, Avg Latency, Last Used 표시
+- **API 유틸리티**: `dashboard/lib/api.ts` — 타입 안전한 FastAPI 서버 연동
+
+### Changed
+- Tremor.so에서 Recharts로 차트 라이브러리 변경 (React 19 호환성)
+
+---
+
 ## [0.1.0-alpha.1] - 2026-04-14
 
 ### Added

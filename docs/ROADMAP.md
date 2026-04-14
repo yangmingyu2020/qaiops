@@ -1,22 +1,22 @@
 # QaiOps Roadmap
 
-> 최종 업데이트: 2026-04-14
+> 최종 업데이트: 2026-04-15
 
 ## 현재 상태
 
 | 항목 | 값 |
 |------|-----|
-| **현재 Phase** | Phase 1 완료, Phase 2 대기 |
-| **버전** | 0.1.0-alpha.1 |
-| **다음 작업** | Phase 2 — Next.js 대시보드 UI 구축 |
-| **상세 계획** | [Phase 2 구현 계획](phases/PHASE2_PLAN.md) |
+| **현재 Phase** | Phase 2 완료, Phase 3 대기 |
+| **버전** | 0.2.0-alpha.1 |
+| **다음 작업** | Phase 3 — 전문 검색, 실시간 스트리밍, 알림 |
+| **상세 계획** | [Phase 3 구현 계획](phases/PHASE3_PLAN.md) |
 
 ---
 
 ## Milestones
 
 - [x] **v0.1.0 (MVP)**: CLI Wrapper + Log Server + SQLite 저장
-- [ ] **v0.2.0**: Next.js 기반 대시보드 UI
+- [x] **v0.2.0**: Next.js 기반 대시보드 UI
 - [ ] **v0.3.0**: 실시간 스트리밍, 전문 검색, 알림
 
 ---
@@ -52,20 +52,21 @@
 
 ---
 
-## Phase 2: Monitoring Dashboard — 예정
+## Phase 2: Monitoring Dashboard — 완료
 
 > 상세: [Phase 2 구현 계획](phases/PHASE2_PLAN.md)
 
 ### 환경 구성
-- [ ] Next.js 14 (App Router) 프로젝트 초기화
-- [ ] Tremor.so 차트 라이브러리 연동
-- [ ] FastAPI 서버와 API 연동 설정
+- [x] Next.js 16 (App Router) 프로젝트 초기화
+- [x] Recharts 차트 라이브러리 연동 (Tremor.so는 React 19 미호환으로 대체)
+- [x] FastAPI 서버와 API 연동 설정 (lib/api.ts)
 
 ### 대시보드 뷰
-- [ ] 메인 대시보드 (일일 토큰/비용 Area Chart)
-- [ ] 도구별 사용 비중 Donut Chart
-- [ ] 프로젝트별 사용량 테이블
-- [ ] 기본 히스토리 목록 뷰
+- [x] 메인 대시보드 (KPI 카드 4개 + 일일 토큰 Area Chart)
+- [x] 도구별 사용 비중 Donut Chart
+- [x] 프로젝트별 사용량 테이블 (/projects)
+- [x] 히스토리 목록 뷰 (/history — 필터, 검색, 페이지네이션, 상세 모달)
+- [x] 비용 상위 요청 Top 5 랭킹
 
 ---
 
