@@ -1,18 +1,97 @@
-# QaiOps 아키텍처 결정사항
+# QaiOps Architecture & Design
 
-> 작성일: 2026-04-14
-> Phase: 1 (MVP)
+> 최종 업데이트: 2026-04-14
+
+QaiOps의 기술적 설계와 주요 결정 사항을 기록합니다.
 
 ## 시스템 구조
 
 ```
-CLI (qaiops run) → FastAPI Server → SQLite DB
-                   ↕ (HTTP POST)
+┌─────────────────────────────────────┐
+│         Developer CLI               │
+│   (gemini / claude / codex / ...)   │
+└──────────────┬──────────────────────┘
+               │  qaiops run <tool> "<prompt>"
+               ▼
+┌─────────────────────────────────────┐
+│     CLI Wrapper (qaiops/wrapper/)   │
+│  • 명령어 인터셉트 및 subprocess 실행  │
+│  • 메타데이터 추출 (git, cwd, time)   │
+│  • 도구별 출력 파서 (parsers/)        │
+│  • 비동기 로그 전송 (daemon thread)   │
+└──────────────┬──────────────────────┘
+               │  HTTP POST (비동기, fire-and-forget)
+               ▼
+┌─────────────────────────────────────┐
+│     Log Server (qaiops/server/)     │
+│  • FastAPI 비동기 엔드포인트          │
+│  • 토큰 보정 (tiktoken)             │
+│  • 비용 계산 (모델별 단가 테이블)      │
+└──────────────┬──────────────────────┘
+               │
+               ▼
+┌─────────────────────────────────────┐
+│     Storage (qaiops/db/)            │
+│  • SQLite + SQLModel + aiosqlite    │
+│  • Alembic 마이그레이션 관리          │
+└──────────────┬──────────────────────┘
+               │
+               ▼
+┌─────────────────────────────────────┐
+│     Dashboard (dashboard/)          │
+│  • Next.js 14 (Phase 2 예정)        │
+│  • Tremor.so 차트                   │
+└─────────────────────────────────────┘
 ```
 
-## SQLite 적응 (PostgreSQL → SQLite)
+## 디렉토리 구조
 
-PRD는 PostgreSQL 문법으로 스키마를 정의했으나, MVP에서는 SQLite를 사용한다.
+PRD의 파편화된 구조 대신, 하나의 Python 패키지(`qaiops`)로 통합하였습니다.
+
+```
+qaiops/
+├── wrapper/              # CLI 래퍼
+│   ├── main.py           # Click CLI 진입점
+│   ├── metadata.py       # git root, cwd, timestamp 추출
+│   ├── sender.py         # 비동기 로그 전송
+│   └── parsers/          # 도구별 출력 파서
+│       ├── __init__.py   # ParseResult, get_parser()
+│       ├── claude.py
+│       ├── gemini.py
+│       └── gpt.py
+├── server/               # FastAPI 서버
+│   ├── main.py           # 앱 생성, CORS, 라이프사이클
+│   ├── cost.py           # 모델별 단가 + calculate_cost()
+│   ├── token_counter.py  # tiktoken count_tokens()
+│   └── routers/
+│       ├── logs.py       # POST/GET /api/v1/logs
+│       └── stats.py      # GET /api/v1/stats/*
+└── db/                   # 데이터베이스
+    ├── engine.py         # AsyncEngine, 세션 관리
+    ├── models.py         # SQLModel 테이블 + Pydantic 스키마
+    └── migrations/       # Alembic
+```
+
+## 주요 기술 결정 (ADR)
+
+### ADR-001: Async-first 아키텍처
+
+**결정**: CLI 응답에 지연을 주지 않기 위해 서버 통신과 DB 저장을 모두 비동기로 처리.
+
+- CLI → Server: `threading.Thread(daemon=True)`로 fire-and-forget
+- Server → DB: `aiosqlite` + SQLAlchemy async engine
+- 서버 미실행 시 stderr 경고만 출력, CLI는 정상 동작
+
+### ADR-002: 단일 Python 패키지 구조
+
+**결정**: `wrapper/`, `server/`, `db/`를 `qaiops/` 패키지로 통합.
+
+- **이유**: `pyproject.toml` entry point와 모듈 간 import가 깔끔해짐
+- **결과**: `qaiops`, `qops` 명령어로 CLI 직접 접근 가능
+
+### ADR-003: SQLite 적응 (PostgreSQL → SQLite)
+
+PRD는 PostgreSQL 문법으로 스키마를 정의했으나, MVP에서는 SQLite를 사용.
 
 | PostgreSQL | SQLite 적응 | 이유 |
 |-----------|-------------|------|
@@ -20,56 +99,23 @@ PRD는 PostgreSQL 문법으로 스키마를 정의했으나, MVP에서는 SQLite
 | `JSONB` | `TEXT` (JSON 문자열) | SQLite에 JSONB 없음 |
 | `TIMESTAMPTZ` | `TEXT` (ISO 8601) | SQLite에 타임존 타입 없음 |
 | `gen_random_uuid()` | Python `uuid4()` | 앱 레벨에서 생성 |
-| `NOW()` | Python `datetime.utcnow()` | 앱 레벨에서 생성 |
-| `ILIKE` | `contains()` | SQLAlchemy가 자동 처리 |
 | `NUMERIC(10,6)` | `REAL` (float) | SQLModel float 매핑 |
 
-## 패키지 구조 변경
+### ADR-004: 서버 사이드 비용 계산
 
-PRD의 `wrapper/`, `server/` 최상위 구조를 `qaiops/` Python 패키지로 통합:
+**결정**: 비용 계산은 CLI가 아닌 서버에서 수행.
 
-```
-qaiops/             ← Python 패키지 (import 및 entry point 지원)
-├── db/             ← 데이터베이스 레이어
-├── server/         ← FastAPI 서버
-└── wrapper/        ← CLI 래퍼
-```
+- **이유**: 단가 테이블을 서버 한 곳에서 관리
+- **구현**: `server/cost.py`에 PRICING 딕셔너리, 로그 저장 시 자동 계산
+- **미지원 모델**: cost = 0.0 반환, 경고 로그
 
-**이유**: `pyproject.toml` entry point 정의와 모듈 간 import가 깔끔해짐.
-
-## 주요 설계 결정
-
-### 1. 동적 쿼리 vs DB 뷰
-
-PRD의 `project_usage_summary` 뷰와 `daily_usage_summary` 테이블 대신 동적 GROUP BY 쿼리를 사용.
-
-- **이유**: MVP 데이터량에서 성능 문제 없음. 뷰/집계 테이블은 Phase 2에서 도입.
-
-### 2. 비용 계산: 서버 사이드
-
-- **이유**: 단가 테이블을 서버 한 곳에서 관리. CLI 래퍼는 가볍게 유지.
-- **구현**: `server/cost.py`에 PRICING 딕셔너리, 서버가 로그 저장 시 자동 계산.
-
-### 3. 토큰 카운팅 폴백
+### ADR-005: 토큰 카운팅 폴백
 
 ```
-API 응답에 usage 필드 있음? → YES → API 값 사용
-                           → NO  → tiktoken 추정 (cl100k_base)
+API 응답에 usage 필드 있음?
+  ├── YES → API 값 사용 (정확)
+  └── NO  → tiktoken 추정 (cl100k_base 폴백)
 ```
-
-- **이유**: 모든 CLI가 토큰 정보를 제공하지 않으므로 서버에서 보정.
-
-### 4. CLI 래퍼 투명성
-
-- 래퍼가 도구의 stdout을 그대로 출력
-- 로그 전송 실패해도 CLI는 정상 동작
-- 도구의 exit code를 그대로 반환
-
-### 5. 비동기 전송 (daemon thread)
-
-- 로그 전송은 `threading.Thread(daemon=True)`로 실행
-- CLI 응답 속도에 영향 없음
-- 서버 미실행 시 stderr 경고만 출력
 
 ## 모델 단가 테이블
 
@@ -82,21 +128,14 @@ API 응답에 usage 필드 있음? → YES → API 값 사용
 | OpenAI | gpt-4o | $5.00 | $15.00 |
 | OpenAI | gpt-4o-mini | $0.15 | $0.60 |
 
-## API 엔드포인트 요약
+## API 엔드포인트
 
 | Method | Endpoint | 설명 |
 |--------|----------|------|
-| POST | `/api/v1/logs` | 로그 저장 |
-| GET | `/api/v1/logs` | 로그 목록 (페이지네이션) |
+| POST | `/api/v1/logs` | 로그 저장 (토큰 보정 + 비용 계산) |
+| GET | `/api/v1/logs` | 로그 목록 (페이지네이션, 필터) |
 | GET | `/api/v1/logs/{id}` | 단일 로그 조회 |
 | GET | `/api/v1/stats/daily` | 일별 통계 |
 | GET | `/api/v1/stats/projects` | 프로젝트별 통계 |
 | GET | `/api/v1/stats/top-costs` | 비용 상위 Top N |
 | GET | `/health` | 헬스체크 |
-
-## 다음 단계 (Phase 2)
-
-- Next.js 14 대시보드 UI
-- WebSocket/SSE 실시간 스트리밍
-- daily_usage_summary 물리 테이블 전환
-- 전문 검색 (FTS5)
