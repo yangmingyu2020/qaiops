@@ -2,6 +2,27 @@
 
 이 프로젝트의 모든 중요한 변경 사항을 기록합니다.
 
+## [0.3.0-alpha.1] - 2026-04-15
+
+### Added
+- **FTS5 전문 검색**: SQLite FTS5 가상 테이블 + 자동 동기화 트리거
+  - GET /api/v1/logs 검색이 FTS5 MATCH로 전환 (LIKE 폴백 유지)
+- **WebSocket 실시간 스트리밍**: WS /ws/live 엔드포인트
+  - BroadcastManager: 연결 관리, 새 로그 자동 브로드캐스트
+  - Live Feed 페이지 (/live): Pause/Resume, Clear, 연결 상태, 자동 재연결
+- **High-Cost Alerts 페이지** (/alerts)
+  - 기준값 설정 가능 (1K / 5K / 10K / 50K tokens)
+  - GET /api/v1/stats/alerts API
+- **히트맵 API**: GET /api/v1/stats/heatmap (date x project 매트릭스)
+- 사이드바에 Live Feed, Alerts 내비게이션 추가
+- health 엔드포인트에 ws_clients 카운트 추가
+
+### Changed
+- 서버 버전 0.1.0 -> 0.2.0
+- 로그 생성 시 WebSocket 클라이언트에 자동 브로드캐스트
+
+---
+
 ## [0.2.0-alpha.1] - 2026-04-15
 
 ### Added

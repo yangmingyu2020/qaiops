@@ -175,3 +175,26 @@ class TopCostItem(SQLModel):
     input_tokens: int
     output_tokens: int
     created_at: str
+
+
+class HeatmapItem(SQLModel):
+    """Heatmap data point (date x project)."""
+
+    date: str
+    project_id: Optional[str]
+    total_tokens: int
+    total_cost: float
+    request_count: int
+
+
+class AlertItem(SQLModel):
+    """High-cost alert entry."""
+
+    id: str
+    tool_name: str
+    model_name: Optional[str]
+    project_id: Optional[str]
+    prompt_text: str
+    total_tokens: int
+    total_cost: float
+    created_at: str

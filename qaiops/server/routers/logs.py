@@ -4,7 +4,7 @@ import json
 import math
 
 from fastapi import APIRouter, Depends, HTTPException, Query
-from sqlalchemy import func, or_
+from sqlalchemy import func, or_, text
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlmodel import select
 
@@ -15,6 +15,7 @@ from qaiops.db.models import (
     LogResponse,
     QaiOpsLog,
 )
+from qaiops.server.broadcast import broadcast_manager
 from qaiops.server.cost import calculate_cost
 from qaiops.server.token_counter import count_tokens
 
@@ -61,7 +62,12 @@ async def create_log(
     await session.commit()
     await session.refresh(log)
 
-    return LogResponse.from_db(log)
+    response = LogResponse.from_db(log)
+
+    # Broadcast to WebSocket clients
+    await broadcast_manager.broadcast(response.model_dump())
+
+    return response
 
 
 @router.get("/logs", response_model=LogListResponse)
@@ -86,12 +92,21 @@ async def list_logs(
         query = query.where(QaiOpsLog.project_id == project_id)
         count_query = count_query.where(QaiOpsLog.project_id == project_id)
     if search:
-        search_filter = or_(
-            QaiOpsLog.prompt_text.contains(search),
-            QaiOpsLog.response_text.contains(search),
-        )
-        query = query.where(search_filter)
-        count_query = count_query.where(search_filter)
+        # Use FTS5 for full-text search, fall back to LIKE if unavailable
+        try:
+            fts_filter = text(
+                "qaiops_logs.rowid IN "
+                "(SELECT rowid FROM qaiops_logs_fts WHERE qaiops_logs_fts MATCH :q)"
+            ).bindparams(q=search)
+            query = query.where(fts_filter)
+            count_query = count_query.where(fts_filter)
+        except Exception:
+            search_filter = or_(
+                QaiOpsLog.prompt_text.contains(search),
+                QaiOpsLog.response_text.contains(search),
+            )
+            query = query.where(search_filter)
+            count_query = count_query.where(search_filter)
 
     # Total count
     total_result = await session.execute(count_query)

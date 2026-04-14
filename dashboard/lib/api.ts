@@ -74,6 +74,25 @@ export interface TopCostItem {
   created_at: string;
 }
 
+export interface HeatmapItem {
+  date: string;
+  project_id: string | null;
+  total_tokens: number;
+  total_cost: number;
+  request_count: number;
+}
+
+export interface AlertItem {
+  id: string;
+  tool_name: string;
+  model_name: string | null;
+  project_id: string | null;
+  prompt_text: string;
+  total_tokens: number;
+  total_cost: number;
+  created_at: string;
+}
+
 // -- API Functions --
 
 export async function fetchLogs(params?: {
@@ -110,6 +129,14 @@ export async function fetchProjectStats(): Promise<ProjectStats[]> {
 
 export async function fetchTopCosts(limit = 10): Promise<TopCostItem[]> {
   return fetchApi<TopCostItem[]>(`/api/v1/stats/top-costs?limit=${limit}`);
+}
+
+export async function fetchHeatmap(days = 30): Promise<HeatmapItem[]> {
+  return fetchApi<HeatmapItem[]>(`/api/v1/stats/heatmap?days=${days}`);
+}
+
+export async function fetchAlerts(threshold = 10000, limit = 50): Promise<AlertItem[]> {
+  return fetchApi<AlertItem[]>(`/api/v1/stats/alerts?threshold=${threshold}&limit=${limit}`);
 }
 
 export async function fetchHealth(): Promise<{ status: string; version: string }> {

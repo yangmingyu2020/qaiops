@@ -6,10 +6,10 @@
 
 | 항목 | 값 |
 |------|-----|
-| **현재 Phase** | Phase 2 완료, Phase 3 대기 |
-| **버전** | 0.2.0-alpha.1 |
-| **다음 작업** | Phase 3 — 전문 검색, 실시간 스트리밍, 알림 |
-| **상세 계획** | [Phase 3 구현 계획](phases/PHASE3_PLAN.md) |
+| **현재 Phase** | Phase 3 완료, Phase 4 대기 |
+| **버전** | 0.3.0-alpha.1 |
+| **다음 작업** | Phase 4 — 단가 자동 업데이트, 도구 추천, 데이터 내보내기 |
+| **상세 계획** | Phase 4 계획서 미작성 (장기 과제) |
 
 ---
 
@@ -17,7 +17,7 @@
 
 - [x] **v0.1.0 (MVP)**: CLI Wrapper + Log Server + SQLite 저장
 - [x] **v0.2.0**: Next.js 기반 대시보드 UI
-- [ ] **v0.3.0**: 실시간 스트리밍, 전문 검색, 알림
+- [x] **v0.3.0**: 실시간 스트리밍, 전문 검색, 알림
 
 ---
 
@@ -70,18 +70,19 @@
 
 ---
 
-## Phase 3: Advanced Analysis — 예정
+## Phase 3: Advanced Analysis — 완료
 
 > 상세: [Phase 3 구현 계획](phases/PHASE3_PLAN.md)
 
 ### 검색 및 스트리밍
-- [ ] 전문 검색 (SQLite FTS5)
-- [ ] 실시간 로그 스트리밍 (WebSocket/SSE)
+- [x] 전문 검색 (SQLite FTS5 + 자동 동기화 트리거)
+- [x] 실시간 로그 스트리밍 (WebSocket /ws/live + 브로드캐스트 매니저)
 
 ### 분석 및 알림
-- [ ] Top 10 Expensive Prompts 섹션
-- [ ] High-Cost Alert 알림 시스템 (10,000+ 토큰)
-- [ ] 프로젝트 히트맵 시각화
+- [x] Top Expensive Prompts (대시보드 내 랭킹)
+- [x] High-Cost Alert 전용 페이지 (/alerts — 기준값 설정 가능)
+- [x] 프로젝트 히트맵 API (GET /api/v1/stats/heatmap)
+- [x] Live Feed 페이지 (/live — Pause/Resume, 자동 스크롤, 연결 상태 표시)
 
 ---
 

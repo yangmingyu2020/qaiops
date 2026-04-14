@@ -128,14 +128,33 @@ API 응답에 usage 필드 있음?
 | OpenAI | gpt-4o | $5.00 | $15.00 |
 | OpenAI | gpt-4o-mini | $0.15 | $0.60 |
 
+### ADR-006: FTS5 전문 검색
+
+**결정**: SQLite FTS5 가상 테이블로 전문 검색 지원, 트리거로 자동 동기화.
+
+- FTS5 MATCH 우선, 실패 시 LIKE 폴백
+- INSERT/UPDATE/DELETE 트리거가 FTS 인덱스를 자동 갱신
+- `init_db()`에서 FTS 테이블과 트리거를 생성
+
+### ADR-007: WebSocket 브로드캐스트
+
+**결정**: 싱글턴 BroadcastManager가 WebSocket 연결을 관리하고, 로그 생성 시 자동 브로드캐스트.
+
+- `server/broadcast.py`에 BroadcastManager 클래스
+- 로그 POST 시 `broadcast_manager.broadcast()` 호출
+- 죽은 연결은 자동 정리 (send 실패 시 제거)
+
 ## API 엔드포인트
 
 | Method | Endpoint | 설명 |
 |--------|----------|------|
-| POST | `/api/v1/logs` | 로그 저장 (토큰 보정 + 비용 계산) |
-| GET | `/api/v1/logs` | 로그 목록 (페이지네이션, 필터) |
+| POST | `/api/v1/logs` | 로그 저장 (토큰 보정 + 비용 계산 + WS 브로드캐스트) |
+| GET | `/api/v1/logs` | 로그 목록 (FTS5 검색, 페이지네이션, 필터) |
 | GET | `/api/v1/logs/{id}` | 단일 로그 조회 |
 | GET | `/api/v1/stats/daily` | 일별 통계 |
 | GET | `/api/v1/stats/projects` | 프로젝트별 통계 |
 | GET | `/api/v1/stats/top-costs` | 비용 상위 Top N |
-| GET | `/health` | 헬스체크 |
+| GET | `/api/v1/stats/heatmap` | 프로젝트 히트맵 데이터 |
+| GET | `/api/v1/stats/alerts` | 고비용 알림 목록 |
+| WebSocket | `/ws/live` | 실시간 로그 스트리밍 |
+| GET | `/health` | 헬스체크 (ws_clients 포함) |
