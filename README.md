@@ -46,13 +46,30 @@ npm install
 
 ## 실행 방법
 
+### 가상환경 활성화 (매 터미널마다 필요)
+
+서버나 CLI를 실행하기 전에 반드시 가상환경을 먼저 활성화해야 합니다:
+
+```bash
+# Windows PowerShell
+.venv\Scripts\Activate.ps1
+
+# Windows CMD
+.venv\Scripts\activate.bat
+
+# macOS / Linux
+source .venv/bin/activate
+```
+
+> 활성화되면 터미널 프롬프트 앞에 `(.venv)`가 표시됩니다.
+
 ### 백엔드 서버 실행
 
 ```bash
-# 방법 1: uvicorn 직접 실행
+# 가상환경 활성화 후 실행
 uvicorn qaiops.server.main:app --reload --port 8765
 
-# 방법 2: CLI 명령으로 실행
+# 또는 CLI 명령으로 실행
 qaiops server
 qaiops server --port 9000  # 포트 변경
 ```
