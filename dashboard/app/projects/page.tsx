@@ -34,7 +34,7 @@ export default function ProjectsPage() {
   }, []);
 
   if (loading) {
-    return <div className="text-gray-400 text-sm py-8 text-center">Loading...</div>;
+    return <div className="text-gray-400 text-sm py-8 text-center">로딩 중...</div>;
   }
 
   if (error) {
@@ -47,31 +47,31 @@ export default function ProjectsPage() {
 
   return (
     <div className="space-y-4">
-      <h2 className="text-lg font-semibold text-gray-800">Projects</h2>
+      <h2 className="text-lg font-semibold text-gray-800">프로젝트</h2>
 
       {data.length === 0 ? (
         <div className="bg-white rounded-lg border border-gray-200 p-8 text-center text-gray-400 text-sm">
-          No project data available
+          프로젝트 데이터가 없습니다
         </div>
       ) : (
         <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
           <table className="w-full text-sm">
             <thead className="bg-gray-50 border-b border-gray-200">
               <tr>
-                <th className="text-left px-4 py-3 font-medium text-gray-500">Project</th>
-                <th className="text-left px-4 py-3 font-medium text-gray-500">Tool</th>
-                <th className="text-right px-4 py-3 font-medium text-gray-500">Requests</th>
-                <th className="text-right px-4 py-3 font-medium text-gray-500">Tokens</th>
-                <th className="text-right px-4 py-3 font-medium text-gray-500">Cost</th>
-                <th className="text-right px-4 py-3 font-medium text-gray-500">Avg Latency</th>
-                <th className="text-right px-4 py-3 font-medium text-gray-500">Last Used</th>
+                <th className="text-left px-4 py-3 font-medium text-gray-500">프로젝트</th>
+                <th className="text-left px-4 py-3 font-medium text-gray-500">도구</th>
+                <th className="text-right px-4 py-3 font-medium text-gray-500">요청 수</th>
+                <th className="text-right px-4 py-3 font-medium text-gray-500">토큰</th>
+                <th className="text-right px-4 py-3 font-medium text-gray-500">비용</th>
+                <th className="text-right px-4 py-3 font-medium text-gray-500">평균 응답</th>
+                <th className="text-right px-4 py-3 font-medium text-gray-500">마지막 사용</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
               {data.map((item, idx) => (
                 <tr key={idx} className="hover:bg-gray-50">
                   <td className="px-4 py-3 font-medium text-gray-800">
-                    {item.project_id || "(no project)"}
+                    {item.project_id || "(프로젝트 없음)"}
                   </td>
                   <td className="px-4 py-3">
                     <span

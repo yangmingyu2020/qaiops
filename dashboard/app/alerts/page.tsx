@@ -39,18 +39,18 @@ export default function AlertsPage() {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-gray-800">High-Cost Alerts</h2>
+        <h2 className="text-lg font-semibold text-gray-800">고비용 알림</h2>
         <div className="flex items-center gap-2 text-sm">
-          <label className="text-gray-500">Threshold:</label>
+          <label className="text-gray-500">기준값:</label>
           <select
             value={threshold}
             onChange={(e) => setThreshold(Number(e.target.value))}
             className="border border-gray-300 rounded px-2 py-1 text-sm bg-white"
           >
-            <option value={1000}>1,000+ tokens</option>
-            <option value={5000}>5,000+ tokens</option>
-            <option value={10000}>10,000+ tokens</option>
-            <option value={50000}>50,000+ tokens</option>
+            <option value={1000}>1,000+ 토큰</option>
+            <option value={5000}>5,000+ 토큰</option>
+            <option value={10000}>10,000+ 토큰</option>
+            <option value={50000}>50,000+ 토큰</option>
           </select>
         </div>
       </div>
@@ -62,10 +62,10 @@ export default function AlertsPage() {
       )}
 
       {loading ? (
-        <div className="text-gray-400 text-sm py-8 text-center">Loading...</div>
+        <div className="text-gray-400 text-sm py-8 text-center">로딩 중...</div>
       ) : alerts.length === 0 ? (
         <div className="bg-white rounded-lg border border-gray-200 p-8 text-center text-gray-400 text-sm">
-          No requests exceed the {threshold.toLocaleString()} token threshold
+          {threshold.toLocaleString()} 토큰 기준을 초과하는 요청이 없습니다
         </div>
       ) : (
         <div className="space-y-3">
@@ -100,7 +100,7 @@ export default function AlertsPage() {
               </div>
               <div className="text-right flex-shrink-0">
                 <p className="text-sm font-semibold text-red-600">
-                  {alert.total_tokens.toLocaleString()} tokens
+                  {alert.total_tokens.toLocaleString()} 토큰
                 </p>
                 <p className="text-xs text-gray-500">{formatCost(alert.total_cost)}</p>
               </div>

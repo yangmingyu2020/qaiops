@@ -49,7 +49,7 @@ export default function DashboardPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64 text-gray-400 text-sm">
-        Loading dashboard...
+        대시보드 로딩 중...
       </div>
     );
   }
@@ -59,7 +59,7 @@ export default function DashboardPage() {
       <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-sm text-red-700">
         {error}
         <p className="mt-1 text-red-500">
-          Make sure the FastAPI server is running on port 8765.
+          FastAPI 서버가 포트 8765에서 실행 중인지 확인하세요.
         </p>
       </div>
     );
@@ -69,24 +69,24 @@ export default function DashboardPage() {
     <div className="space-y-6">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatsCard
-          title="Total Requests"
+          title="총 요청 수"
           value={totalRequests.toLocaleString()}
-          subtitle="Last 30 days"
+          subtitle="최근 30일"
         />
         <StatsCard
-          title="Total Tokens"
+          title="총 토큰"
           value={totalTokens.toLocaleString()}
-          subtitle="Last 30 days"
+          subtitle="최근 30일"
         />
         <StatsCard
-          title="Total Cost"
+          title="총 비용"
           value={formatCost(totalCost)}
-          subtitle="Last 30 days"
+          subtitle="최근 30일"
         />
         <StatsCard
-          title="Active Tools"
+          title="활성 도구"
           value={String(toolCount)}
-          subtitle="Distinct tools used"
+          subtitle="사용된 도구 수"
         />
       </div>
 

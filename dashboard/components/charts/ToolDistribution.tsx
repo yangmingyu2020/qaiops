@@ -24,9 +24,9 @@ export default function ToolDistribution({ data }: ToolDistributionProps) {
   if (chartData.length === 0) {
     return (
       <div className="bg-white rounded-lg border border-gray-200 p-6">
-        <h3 className="text-sm font-medium text-gray-700 mb-4">Tool Distribution</h3>
+        <h3 className="text-sm font-medium text-gray-700 mb-4">도구별 사용 비중</h3>
         <div className="h-64 flex items-center justify-center text-gray-400 text-sm">
-          No data available
+          데이터 없음
         </div>
       </div>
     );
@@ -34,7 +34,7 @@ export default function ToolDistribution({ data }: ToolDistributionProps) {
 
   return (
     <div className="bg-white rounded-lg border border-gray-200 p-6">
-      <h3 className="text-sm font-medium text-gray-700 mb-4">Tool Distribution</h3>
+      <h3 className="text-sm font-medium text-gray-700 mb-4">도구별 사용 비중</h3>
       <ResponsiveContainer width="100%" height={280}>
         <PieChart>
           <Pie
@@ -50,7 +50,7 @@ export default function ToolDistribution({ data }: ToolDistributionProps) {
               <Cell key={index} fill={COLORS[index % COLORS.length]} />
             ))}
           </Pie>
-          <Tooltip formatter={(value: number) => [value, "Requests"]} />
+          <Tooltip formatter={(value: number) => [value, "요청"]} />
           <Legend
             verticalAlign="bottom"
             iconType="circle"

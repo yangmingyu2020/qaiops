@@ -48,9 +48,9 @@ export default function DailyUsageChart({ data }: DailyUsageChartProps) {
   if (chartData.length === 0) {
     return (
       <div className="bg-white rounded-lg border border-gray-200 p-6">
-        <h3 className="text-sm font-medium text-gray-700 mb-4">Daily Usage</h3>
+        <h3 className="text-sm font-medium text-gray-700 mb-4">일일 사용량</h3>
         <div className="h-64 flex items-center justify-center text-gray-400 text-sm">
-          No data available
+          데이터 없음
         </div>
       </div>
     );
@@ -58,7 +58,7 @@ export default function DailyUsageChart({ data }: DailyUsageChartProps) {
 
   return (
     <div className="bg-white rounded-lg border border-gray-200 p-6">
-      <h3 className="text-sm font-medium text-gray-700 mb-4">Daily Token Usage</h3>
+      <h3 className="text-sm font-medium text-gray-700 mb-4">일일 토큰 사용량</h3>
       <ResponsiveContainer width="100%" height={280}>
         <AreaChart data={chartData}>
           <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
@@ -70,8 +70,8 @@ export default function DailyUsageChart({ data }: DailyUsageChartProps) {
           <YAxis tick={{ fontSize: 11, fill: "#9ca3af" }} />
           <Tooltip
             contentStyle={{ fontSize: 12 }}
-            formatter={(value: number) => [value.toLocaleString(), "Tokens"]}
-            labelFormatter={(label) => `Date: ${label}`}
+            formatter={(value: number) => [value.toLocaleString(), "토큰"]}
+            labelFormatter={(label) => `날짜: ${label}`}
           />
           <Area
             type="monotone"

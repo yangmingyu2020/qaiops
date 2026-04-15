@@ -33,7 +33,7 @@ export default function LogTable({ logs, onRowClick }: LogTableProps) {
   if (logs.length === 0) {
     return (
       <div className="bg-white rounded-lg border border-gray-200 p-8 text-center text-gray-400 text-sm">
-        No logs found
+        로그가 없습니다
       </div>
     );
   }
@@ -43,12 +43,12 @@ export default function LogTable({ logs, onRowClick }: LogTableProps) {
       <table className="w-full text-sm">
         <thead className="bg-gray-50 border-b border-gray-200">
           <tr>
-            <th className="text-left px-4 py-3 font-medium text-gray-500">Tool</th>
-            <th className="text-left px-4 py-3 font-medium text-gray-500">Prompt</th>
-            <th className="text-left px-4 py-3 font-medium text-gray-500">Project</th>
-            <th className="text-right px-4 py-3 font-medium text-gray-500">Tokens</th>
-            <th className="text-right px-4 py-3 font-medium text-gray-500">Cost</th>
-            <th className="text-right px-4 py-3 font-medium text-gray-500">Time</th>
+            <th className="text-left px-4 py-3 font-medium text-gray-500">도구</th>
+            <th className="text-left px-4 py-3 font-medium text-gray-500">프롬프트</th>
+            <th className="text-left px-4 py-3 font-medium text-gray-500">프로젝트</th>
+            <th className="text-right px-4 py-3 font-medium text-gray-500">토큰</th>
+            <th className="text-right px-4 py-3 font-medium text-gray-500">비용</th>
+            <th className="text-right px-4 py-3 font-medium text-gray-500">시간</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-100">

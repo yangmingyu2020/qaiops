@@ -45,7 +45,7 @@ export default function HistoryPage() {
 
   return (
     <div className="space-y-4">
-      <h2 className="text-lg font-semibold text-gray-800">History</h2>
+      <h2 className="text-lg font-semibold text-gray-800">히스토리</h2>
 
       {/* Filters */}
       <form onSubmit={handleSearch} className="flex gap-3 flex-wrap">
@@ -54,21 +54,21 @@ export default function HistoryPage() {
           onChange={(e) => { setToolFilter(e.target.value); setPage(1); }}
           className="border border-gray-300 rounded px-3 py-1.5 text-sm bg-white"
         >
-          <option value="">All Tools</option>
+          <option value="">전체 도구</option>
           <option value="claude">Claude</option>
           <option value="gemini">Gemini</option>
           <option value="gpt">GPT</option>
         </select>
         <input
           type="text"
-          placeholder="Project ID"
+          placeholder="프로젝트 ID"
           value={projectFilter}
           onChange={(e) => { setProjectFilter(e.target.value); setPage(1); }}
           className="border border-gray-300 rounded px-3 py-1.5 text-sm w-40"
         />
         <input
           type="text"
-          placeholder="Search prompts..."
+          placeholder="프롬프트 검색..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="border border-gray-300 rounded px-3 py-1.5 text-sm flex-1 min-w-48"
@@ -77,7 +77,7 @@ export default function HistoryPage() {
           type="submit"
           className="bg-gray-900 text-white px-4 py-1.5 rounded text-sm hover:bg-gray-800 transition-colors"
         >
-          Search
+          검색
         </button>
       </form>
 
@@ -88,7 +88,7 @@ export default function HistoryPage() {
       )}
 
       {loading ? (
-        <div className="text-gray-400 text-sm py-8 text-center">Loading...</div>
+        <div className="text-gray-400 text-sm py-8 text-center">로딩 중...</div>
       ) : data ? (
         <>
           <LogTable logs={data.items} onRowClick={setSelectedLog} />
@@ -97,7 +97,7 @@ export default function HistoryPage() {
           {data.pages > 1 && (
             <div className="flex items-center justify-between text-sm">
               <span className="text-gray-500">
-                Page {data.page} of {data.pages} ({data.total} total)
+                {data.page} / {data.pages} 페이지 (총 {data.total}건)
               </span>
               <div className="flex gap-2">
                 <button
@@ -105,14 +105,14 @@ export default function HistoryPage() {
                   disabled={page <= 1}
                   className="px-3 py-1 border border-gray-300 rounded text-sm disabled:opacity-40"
                 >
-                  Prev
+                  이전
                 </button>
                 <button
                   onClick={() => setPage((p) => Math.min(data.pages, p + 1))}
                   disabled={page >= data.pages}
                   className="px-3 py-1 border border-gray-300 rounded text-sm disabled:opacity-40"
                 >
-                  Next
+                  다음
                 </button>
               </div>
             </div>
@@ -131,50 +131,50 @@ export default function HistoryPage() {
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between mb-4">
-              <h3 className="font-semibold text-gray-800">Log Detail</h3>
+              <h3 className="font-semibold text-gray-800">로그 상세</h3>
               <button
                 onClick={() => setSelectedLog(null)}
                 className="text-gray-400 hover:text-gray-600"
               >
-                Close
+                닫기
               </button>
             </div>
             <div className="space-y-4 text-sm">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="text-gray-500">Tool</label>
+                  <label className="text-gray-500">도구</label>
                   <p className="font-medium">{selectedLog.tool_name}</p>
                 </div>
                 <div>
-                  <label className="text-gray-500">Model</label>
+                  <label className="text-gray-500">모델</label>
                   <p className="font-medium">{selectedLog.model_name || "-"}</p>
                 </div>
                 <div>
-                  <label className="text-gray-500">Project</label>
+                  <label className="text-gray-500">프로젝트</label>
                   <p className="font-medium">{selectedLog.project_id || "-"}</p>
                 </div>
                 <div>
-                  <label className="text-gray-500">Cost</label>
+                  <label className="text-gray-500">비용</label>
                   <p className="font-medium">${selectedLog.total_cost.toFixed(6)}</p>
                 </div>
                 <div>
-                  <label className="text-gray-500">Input Tokens</label>
+                  <label className="text-gray-500">입력 토큰</label>
                   <p className="font-medium">{selectedLog.input_tokens.toLocaleString()}</p>
                 </div>
                 <div>
-                  <label className="text-gray-500">Output Tokens</label>
+                  <label className="text-gray-500">출력 토큰</label>
                   <p className="font-medium">{selectedLog.output_tokens.toLocaleString()}</p>
                 </div>
               </div>
               <div>
-                <label className="text-gray-500">Prompt</label>
+                <label className="text-gray-500">프롬프트</label>
                 <pre className="mt-1 bg-gray-50 p-3 rounded text-xs whitespace-pre-wrap break-words">
                   {selectedLog.prompt_text}
                 </pre>
               </div>
               {selectedLog.response_text && (
                 <div>
-                  <label className="text-gray-500">Response</label>
+                  <label className="text-gray-500">응답</label>
                   <pre className="mt-1 bg-gray-50 p-3 rounded text-xs whitespace-pre-wrap break-words max-h-60 overflow-auto">
                     {selectedLog.response_text}
                   </pre>

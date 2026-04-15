@@ -75,7 +75,7 @@ export default function LivePage() {
   return (
     <div className="space-y-4 h-full flex flex-col">
       <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-gray-800">Live Feed</h2>
+        <h2 className="text-lg font-semibold text-gray-800">실시간 피드</h2>
         <div className="flex items-center gap-4">
           <button
             onClick={() => setPaused((p) => !p)}
@@ -85,21 +85,21 @@ export default function LivePage() {
                 : "border-gray-300 text-gray-600 hover:bg-gray-50"
             }`}
           >
-            {paused ? "Resume" : "Pause"}
+            {paused ? "재개" : "일시정지"}
           </button>
           <button
             onClick={() => setLogs([])}
             className="px-3 py-1 rounded text-sm border border-gray-300 text-gray-600 hover:bg-gray-50"
           >
-            Clear
+            초기화
           </button>
           <div className="flex items-center gap-2 text-xs text-gray-500">
             <span className={`w-2 h-2 rounded-full ${statusColor}`} />
             {status === "connected"
-              ? "Connected"
+              ? "연결됨"
               : status === "connecting"
-              ? "Connecting..."
-              : "Disconnected"}
+              ? "연결 중..."
+              : "연결 끊김"}
           </div>
         </div>
       </div>
@@ -110,9 +110,9 @@ export default function LivePage() {
       >
         {logs.length === 0 ? (
           <div className="flex items-center justify-center h-full text-gray-400 text-sm">
-            Waiting for new logs...
+            새 로그를 기다리는 중...
             <br />
-            Use the CLI wrapper to generate logs.
+            CLI 래퍼를 사용하여 로그를 생성하세요.
           </div>
         ) : (
           <div className="divide-y divide-gray-100">
@@ -144,7 +144,7 @@ export default function LivePage() {
       </div>
 
       <div className="text-xs text-gray-400">
-        {logs.length} logs in buffer (max 200)
+        버퍼에 {logs.length}개 로그 (최대 200개)
       </div>
     </div>
   );

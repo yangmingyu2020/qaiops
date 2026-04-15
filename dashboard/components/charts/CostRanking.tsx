@@ -18,9 +18,9 @@ const toolColors: Record<string, string> = {
 export default function CostRanking({ data }: CostRankingProps) {
   return (
     <div className="bg-white rounded-lg border border-gray-200 p-6">
-      <h3 className="text-sm font-medium text-gray-700 mb-4">Top Expensive Requests</h3>
+      <h3 className="text-sm font-medium text-gray-700 mb-4">비용 상위 요청</h3>
       {data.length === 0 ? (
-        <div className="text-gray-400 text-sm text-center py-8">No data available</div>
+        <div className="text-gray-400 text-sm text-center py-8">데이터 없음</div>
       ) : (
         <div className="space-y-3">
           {data.map((item, index) => (
